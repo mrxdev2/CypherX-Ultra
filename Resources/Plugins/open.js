@@ -1,3 +1,6 @@
+const { ensureChatSettings, getGroupRoles } = require('../Functions/group-antis.js');
+
+
 module.exports = () => ({
   name: "Open Group",
   triggers: ["open"],
@@ -7,28 +10,19 @@ module.exports = () => ({
   owner: true,
 
   run: async ({ m, Cypher }) => {
+    
     if (!m.isGroup) {
       return m.reply("⚠️ *This command can only be used in groups!*");
     }
 
     try {
-      const groupMetadata = await Cypher.groupMetadata(m.chat);
-      const participants = groupMetadata.participants;
-      const botNumber = await Cypher.decodeJid(Cypher.user.id);
+const { isSenderAdmin, isBotAdmin } = await getGroupRoles(Cypher, m);
 
-      const senderIsAdmin = participants.find(
-        (p) => p.id === m.sender && (p.admin === "admin" || p.admin === "superadmin")
-      );
-
-      if (!senderIsAdmin) {
+      if (!isSenderAdmin) {
         return m.reply("⚠️ *This command requires admin privileges!*");
       }
 
-      const botIsAdmin = participants.find(
-        (p) => p.id === botNumber && (p.admin === "admin" || p.admin === "superadmin")
-      );
-
-      if (!botIsAdmin) {
+      if (!isBotAdmin) {
         return m.reply("⚠️ *Bot needs to be an admin to perform this action!*");
       }
       
