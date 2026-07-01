@@ -764,6 +764,33 @@
     .notification-error   .notification-icon { color: var(--error); }
     .notification-info    .notification-icon { color: var(--info); }
 
+    /* ── Developer Selection Modal Styling ───────────────────────────────── */
+    .dev-modal {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+      display: flex; align-items: center; justify-content: center; padding: 16px;
+    }
+    .dev-modal-content {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); box-shadow: var(--shadow-xl);
+      width: 100%; max-width: 400px; padding: 24px; animation: fadeUp 0.3s ease;
+    }
+    .dev-modal-header {
+      margin-bottom: 18px; text-align: center;
+    }
+    .dev-modal-header h3 { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+    .dev-modal-header p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .dev-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .dev-btn {
+      width: 100%; padding: 14px; background: var(--bg-elevated);
+      border: 1px solid var(--border); border-radius: var(--radius-md);
+      color: var(--text-primary); font-family: inherit; font-size: 14px; font-weight: 600;
+      cursor: pointer; text-align: left; display: flex; align-items: center; justify-content: space-between;
+      transition: var(--transition);
+    }
+    .dev-btn:hover { border-color: var(--brand); background: rgba(124,58,237,0.08); }
+    .dev-btn span.phone { font-size: 12px; color: var(--brand-light); font-weight: 400; }
+
     /* ── Responsive ────────────────────────────────────────────────────────── */
     @media (max-width: 600px) {
       .page { padding: 16px 12px; align-items: flex-start; padding-top: 30px; }
@@ -799,7 +826,6 @@
 
   <div class="page">
 
-    <!-- ── AUTH CARD ─────────────────────────────────────────────────────── -->
     <div class="auth-shell" id="authCard">
 
       <div class="brand-header">
@@ -808,13 +834,11 @@
         <div class="brand-sub">Advanced WhatsApp Bot Control Panel</div>
       </div>
 
-      <!-- Auth tabs -->
       <div class="nav-tabs" id="authNav">
         <div class="nav-tab active" data-mode="login">🔐 Login</div>
         <div class="nav-tab" data-mode="register">📱 Add Session</div>
       </div>
 
-      <!-- LOGIN FORM -->
       <div id="loginForm" class="form-panel">
         <div id="loginAlert" class="alert hidden"></div>
 
@@ -841,7 +865,6 @@
         </button>
       </div>
 
-      <!-- REGISTER FORM -->
       <div id="registerForm" class="form-panel hidden">
         <div id="registerAlert" class="alert hidden"></div>
         <div id="pairCodeBox" class="alert hidden"></div>
@@ -859,9 +882,9 @@
           </div>
 
           <div class="form-group" style="margin-bottom: 20px;">
-            <a href="https://wa.me/255775710774?text=Code%20exchanged%20for%201usd%20please%20send%20to%200775710774%20name%20jamila%20After%20Send%20payment%20receipt%20so%20as%20to%20be%20verified" target="_blank" class="btn btn-secondary btn-full" style="text-decoration: none;">
+            <button type="button" class="btn btn-secondary btn-full" onclick="openDevModal()">
               <span>🔑 Get Password</span>
-            </a>
+            </button>
           </div>
 
           <button type="submit" class="btn btn-primary btn-full">
@@ -873,13 +896,8 @@
           A pairing code will be displayed here — enter it in WhatsApp under <strong>Linked Devices → Link with phone number</strong>.
         </p>
       </div>
-    </div><!-- /auth-shell -->
+    </div><div id="settingsDashboard" class="dashboard-shell hidden">
 
-
-    <!-- ── DASHBOARD ─────────────────────────────────────────────────────── -->
-    <div id="settingsDashboard" class="dashboard-shell hidden">
-
-      <!-- Top bar -->
       <div class="topbar">
         <div class="topbar-brand">
           <div class="topbar-logo">🚀</div>
@@ -891,14 +909,12 @@
         <button class="btn btn-secondary btn-sm" onclick="logout()">🚪 Logout</button>
       </div>
 
-      <!-- Dashboard tabs -->
       <div class="dash-nav nav-tabs">
         <div class="nav-tab active" onclick="switchTab('settings')">⚙️ Settings</div>
         <div class="nav-tab" onclick="switchTab('games')">🎮 Games</div>
         <div class="nav-tab" onclick="switchTab('leaderboard'); loadLeaderboard()">🏆 Leaderboard</div>
       </div>
 
-      <!-- SETTINGS TAB -->
       <div id="settingsTab" class="tab-content">
         <div class="settings-grid" id="settingsContainer">
           <div class="loading" style="grid-column:1/-1;">
@@ -908,7 +924,6 @@
         </div>
       </div>
 
-      <!-- GAMES TAB -->
       <div id="gamesTab" class="tab-content hidden">
 
         <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">
@@ -981,7 +996,6 @@
           <button class="btn btn-secondary" onclick="showJoinGameForm()">📥 Join Existing Game</button>
         </div>
 
-        <!-- Pending Game -->
         <div id="pendingGamesContainer" class="hidden">
           <div class="game-section">
             <h3 id="pendingHeader">🎮 Your Pending Game</h3>
@@ -999,7 +1013,6 @@
           </div>
         </div>
 
-        <!-- Join Form -->
         <div id="joinGameForm" class="game-section hidden">
           <h3>Join a Game</h3>
           <div class="join-game-form">
@@ -1012,7 +1025,6 @@
           </div>
         </div>
 
-        <!-- Game Board -->
         <div id="gameBoard" class="hidden">
           <div id="gameInfo"></div>
           <div class="game-board-grid" id="board"></div>
@@ -1021,7 +1033,6 @@
             <button class="btn btn-danger btn-sm" onclick="concedeGame()" title="Forfeit — you lose, opponent wins">🏳️ Concede</button>
           </div>
 
-          <!-- In-Game Chat -->
           <div id="gameChat" class="game-chat hidden">
             <h4>💬 Game Chat</h4>
             <div class="chat-messages" id="chatMessages">
@@ -1036,27 +1047,55 @@
           </div>
         </div>
 
-      </div><!-- /gamesTab -->
-
-      <!-- LEADERBOARD TAB -->
-      <div id="leaderboardTab" class="tab-content hidden">
+      </div><div id="leaderboardTab" class="tab-content hidden">
         <div id="leaderboardContainer">
           <div class="loading"><div class="spinner"></div><p>Loading leaderboard…</p></div>
         </div>
       </div>
 
-    </div><!-- /dashboard-shell -->
-
-  </div><!-- /page -->
-
-  <!-- Solo Game Overlay -->
-  <div id="soloGameOverlay" class="solo-overlay hidden" onclick="if(event.target===this)closeSoloGame()">
+    </div></div><div id="soloGameOverlay" class="solo-overlay hidden" onclick="if(event.target===this)closeSoloGame()">
     <div class="solo-container" id="soloGameContent"></div>
   </div>
 
-  <!-- Hidden element stubs that app.js references (kept for compatibility) -->
+  <div id="devModal" class="dev-modal hidden" onclick="if(event.target===this)closeDevModal()">
+    <div class="dev-modal-content">
+      <div class="dev-modal-header">
+        <h3>Choose Developer</h3>
+        <p>Select a developer to request your password</p>
+      </div>
+      <div class="dev-list">
+        <button type="button" class="dev-btn" onclick="redirectToDev('255775710774')">
+          <span>Developer 1</span> <span class="phone">+255 775 710 774</span>
+        </button>
+        <button type="button" class="dev-btn" onclick="redirectToDev('255663524731')">
+          <span>Developer 2</span> <span class="phone">+255 663 524 731</span>
+        </button>
+        <button type="button" class="dev-btn" onclick="redirectToDev('2348117087564')">
+          <span>Developer 3</span> <span class="phone">+234 811 708 7564</span>
+        </button>
+      </div>
+      <button type="button" class="btn btn-secondary btn-full btn-sm" onclick="closeDevModal()">Cancel</button>
+    </div>
+  </div>
+
   <div id="sessionOwnerName" class="hidden"></div>
 
+  <script>
+    function openDevModal() {
+      document.getElementById('devModal').classList.remove('hidden');
+    }
+
+    function closeDevModal() {
+      document.getElementById('devModal').classList.add('hidden');
+    }
+
+    function redirectToDev(phone) {
+      const message = "Code exchange rate is 1 USD. Please send payment to 0775710774 (Jamila). After making the payment, kindly send the receipt for verification";
+      const encodedMessage = encodeURIComponent(message);
+      window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+      closeDevModal();
+    }
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
